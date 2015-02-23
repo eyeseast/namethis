@@ -34,12 +34,20 @@ def get_random_name(group=None):
     return redis.srandmember(key)
 
 
+@app.route('/<name>')
+@app.route('/<name>/<sex>')
 def name_stats(name, sex=None):
+    "Get JSON stats for a single name"
+    stats = get_name_stats(name, sex)
+    return jsonify(results=stats)
+
+
+def get_name_stats(name, sex=None):
     "Get stats for a single name"
     table = db['names']
     where = {'name': name}
     if sex:
-        where['sex'] = sex
+        where['sex'] = sex.upper()
 
     result = table.find(**where)
     return list(result)
