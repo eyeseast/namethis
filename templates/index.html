@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Pick a name{% endblock title %}
+
+{% block content %}
+<div class="jumbotron">
+    <div class="container">
+        <h1>Pick a name</h1>
+        <p>Plug in your last name. Hit Go for a random first name.</p>
+        <form class="form-inline" id="names">
+            <div class="form-group">
+                <select name="sex" class="form-control">
+                    <option value="all">All names</option>
+                    <option value="f">Female</option>
+                    <option value="m">Male</option>
+                </select>
+                <input type="text" class="form-control" name="firstname">
+                <input type="text" class="form-control" name="lastname" placeholder="Last name">
+                <button class="btn btn-default">Go</button>    
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block scripts %}
+<script>
+var form = $('#names')
+  , baseurl = "{{ url_for('get_random_name') }}";
+
+var lastname = localStorage.getItem('namethis:lastname');
+
+if (lastname) {
+    $('[name=lastname]').val(lastname);
+};
+
+form.on('submit', function(e) {
+    e.preventDefault();
+
+    // stash last name
+    lastname = $('[name=lastname]').val();
+    localStorage.setItem('namethis:lastname', lastname);
+
+    // filter by sex
+    var sex = $('[name=sex]').val()
+      , url = [baseurl, sex].join('/');
+
+    $.get(url).then(function(name) {
+        $('[name=firstname]').val(name);
+    });
+});
+</script>
+{% endblock scripts %}
