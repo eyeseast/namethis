@@ -1,0 +1,24 @@
+{
+  "name": "namethis",
+  "version": "0.0.0",
+  "authors": [
+    "chrisamico <eyeseast@gmail.com>"
+  ],
+  "description": "A random name generator",
+  "moduleType": [
+    "globals"
+  ],
+  "license": "null",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "static/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "d3": "~3.5.5"
+  }
+}
