@@ -3,7 +3,7 @@ Flask app serving up random names for no good reason
 """
 import os
 import dataset
-from flask import Flask, g, render_template, jsonify
+from flask import Flask, g, render_template, jsonify, url_for
 from redis import StrictRedis
 
 # database
@@ -32,6 +32,18 @@ def get_redis():
     if redis is None:
         redis = StrictRedis.from_url(REDIS_URL)
     return redis
+
+
+def get_name_stats(name, sex=None):
+    "Get stats for a single name"
+    db = get_db()
+    table = db['names']
+    where = {'name': name}
+    if sex in {'m', 'M', 'f', 'F'}:
+        where['sex'] = sex.upper()
+
+    result = table.find(**where)
+    return list(result)
 
 
 @app.route('/')
@@ -70,16 +82,10 @@ def name_stats(name, sex=None):
     return jsonify(results=stats)
 
 
-def get_name_stats(name, sex=None):
-    "Get stats for a single name"
-    db = get_db()
-    table = db['names']
-    where = {'name': name}
-    if sex in {'m', 'M', 'f', 'F'}:
-        where['sex'] = sex.upper()
-
-    result = table.find(**where)
-    return list(result)
+@app.template_global('s')
+def static(filename):
+    "Shortcut for static url"
+    return url_for('static', filename=filename)
 
 
 if __name__ == "__main__":

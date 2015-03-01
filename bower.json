@@ -20,5 +20,8 @@
   ],
   "dependencies": {
     "d3": "~3.5.5"
+  },
+  "resolutions": {
+    "d3": "~3.5.5"
   }
 }

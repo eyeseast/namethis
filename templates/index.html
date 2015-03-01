@@ -2,6 +2,31 @@
 
 {% block title %}Pick a name{% endblock title %}
 
+{% block css %}
+<link rel="stylesheet" href="{{ s('bower_components/d4/d4.css') }}">
+<style>
+/* svg styles */
+svg {
+    font-family: sans-serif;
+    font-size: 10px;
+    width: 100%;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #444;
+    stroke-width: .5;
+}
+
+.column {
+    fill: Steelblue;
+    stroke: #fff;
+}
+
+</style>
+{% endblock css %}
+
 {% block content %}
 <div class="jumbotron">
     <div class="container">
@@ -22,34 +47,116 @@
     </div>
 </div>
 
+<div class="container">
+    <div class="row">
+        <div id="chart" class="col-xs-12"></div>
+    </div>
+</div>
 {% endblock content %}
+
+{% block library_scripts %}
+<script src="{{ s('bower_components/d3/d3.min.js') }}"></script>
+<script src="{{ s('bower_components/d4/d4.min.js') }}"></script>
+
+{% endblock library_scripts %}
 
 {% block scripts %}
 <script>
-var form = $('#names')
-  , baseurl = "{{ url_for('get_random_stats') }}";
+var form = d3.select('#names')
+  , baseurl = "{{ url_for('get_random_stats') }}"
+  , margin = {top: 10, right: 30, bottom: 30, left: 50}
+  , width = parseInt(d3.select('#chart').style('width'), 10)
+  , width = width - margin.left - margin.right
+  , height = 350;
 
+// global lastname
 var lastname = localStorage.getItem('namethis:lastname');
 
 if (lastname) {
-    $('[name=lastname]').val(lastname);
+    d3.select('[name=lastname]').property('value', lastname);
 };
 
-form.on('submit', function(e) {
-    e.preventDefault();
+var x = d3.scale.linear()
+    .domain([1880, 2014])
+    .range([0, width]);
+
+var y = d3.scale.linear()
+    .range([height, 0]);
+
+var xAxis = d3.svg.axis()
+    .orient('bottom')
+    .scale(x)
+    .tickFormat(String);
+
+var yAxis = d3.svg.axis()
+    .orient('left')
+    .scale(y)
+    .tickFormat(d3.format(','));
+
+var svg = d3.select('#chart').append('svg')
+    //.style('width', (width + margin.left + margin.right) + 'px')
+    .style('height', (height + margin.top + margin.bottom) + 'px')
+  .append('g')
+    .attr('transform', 'translate(' + [margin.left, margin.top] + ')');
+
+svg.append('g')
+    .attr('class', 'x axis')
+    .attr('transform', 'translate(' + [0, height] + ')')
+    .call(xAxis);
+
+svg.append('g')
+    .attr('class', 'y axis')
+    .call(yAxis);
+
+
+form.on('submit', function() {
+    d3.event.preventDefault();
 
     // stash last name
-    lastname = $('[name=lastname]').val();
+    lastname = d3.select('[name=lastname]').property('value');
     localStorage.setItem('namethis:lastname', lastname);
 
     // filter by sex
-    var sex = $('[name=sex]').val()
+    var sex = d3.select('[name=sex]').property('value')
       , url = [baseurl, sex].join('/');
 
-    $.get(url).then(function(data) {
+    d3.json(url, function(err, data) {
         window.data = data;
-        $('[name=firstname]').val(data.name);
+        d3.select('[name=firstname]').property('value', data.name);
+
+        render_chart(data.stats);
+
     });
 });
+
+function render_chart(data) {
+
+    // update y
+    y.domain([0, d3.max(data, function(d) { return d.number; })])
+    svg.select('.y.axis')
+        .transition()
+        .call(yAxis);
+
+    var bars = svg.selectAll('.column')
+        .data(data, function(d) { return d.year; });
+
+    bars.enter().append('rect')
+        .attr('class', 'column')
+        .attr('width', width / (2013 - 1880))
+        .attr('x', function(d) { return x(d.year); });
+
+    // update
+    bars
+        .transition()
+        .attr('y', function(d) { return y(d.number); })
+        .attr('height', function(d) { return height - y(d.number); });
+
+    bars.exit()
+        .transition()
+        .attr('y', height)
+        .attr('height', 0)
+        .remove();
+
+}
 </script>
 {% endblock scripts %}
