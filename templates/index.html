@@ -47,6 +47,7 @@ form.on('submit', function(e) {
       , url = [baseurl, sex].join('/');
 
     $.get(url).then(function(data) {
+        window.data = data;
         $('[name=firstname]').val(data.name);
     });
 });

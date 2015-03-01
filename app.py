@@ -75,7 +75,7 @@ def get_name_stats(name, sex=None):
     db = get_db()
     table = db['names']
     where = {'name': name}
-    if sex:
+    if sex in {'m', 'M', 'f', 'F'}:
         where['sex'] = sex.upper()
 
     result = table.find(**where)
