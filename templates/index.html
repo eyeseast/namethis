@@ -27,7 +27,7 @@
 {% block scripts %}
 <script>
 var form = $('#names')
-  , baseurl = "{{ url_for('get_random_name') }}";
+  , baseurl = "{{ url_for('get_random_stats') }}";
 
 var lastname = localStorage.getItem('namethis:lastname');
 
@@ -46,8 +46,8 @@ form.on('submit', function(e) {
     var sex = $('[name=sex]').val()
       , url = [baseurl, sex].join('/');
 
-    $.get(url).then(function(name) {
-        $('[name=firstname]').val(name);
+    $.get(url).then(function(data) {
+        $('[name=firstname]').val(data.name);
     });
 });
 </script>

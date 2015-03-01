@@ -6,9 +6,13 @@ import dataset
 from flask import Flask, g, render_template, jsonify
 from redis import StrictRedis
 
-# using this for prototyping
+# database
 DATABASE_URL = os.environ.get('DATABASE_URL', 'sqlite:///names.db')
 REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379/1')
+
+DATABASE_ENGINE_KWARGS = {
+    'pool_recycle': 3600
+}
 
 app = Flask(__name__)
 app.config.from_object(__name__)
