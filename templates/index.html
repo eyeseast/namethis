@@ -3,7 +3,6 @@
 {% block title %}Pick a name{% endblock title %}
 
 {% block css %}
-<link rel="stylesheet" href="{{ s('bower_components/d4/d4.css') }}">
 <style>
 /* svg styles */
 svg {
@@ -20,8 +19,16 @@ svg {
 }
 
 .column {
-    fill: Steelblue;
     stroke: #fff;
+    stroke-width: .5;
+}
+
+.column.male {
+    fill: Steelblue;
+}
+
+.column.female {
+    fill: Pink;
 }
 
 </style>
@@ -56,7 +63,9 @@ svg {
 
 {% block library_scripts %}
 <script src="{{ s('bower_components/d3/d3.min.js') }}"></script>
-<script src="{{ s('bower_components/d4/d4.min.js') }}"></script>
+{# <script src="{{ s('bower_components/zepto/zepto.min.js') }}"></script> #}
+{# <script src="{{ s('bower_components/underscore/underscore-min.js') }}"></script> #}
+{# <script src="{{ s('bower_components/backbone/backbone.js') }}"></script> #}
 
 {% endblock library_scripts %}
 
@@ -67,7 +76,8 @@ var form = d3.select('#names')
   , margin = {top: 10, right: 30, bottom: 30, left: 50}
   , width = parseInt(d3.select('#chart').style('width'), 10)
   , width = width - margin.left - margin.right
-  , height = 350;
+  , height = 350
+  , barWidth = (width / (2013 - 1880) / 2);
 
 // global lastname
 var lastname = localStorage.getItem('namethis:lastname');
@@ -124,12 +134,33 @@ form.on('submit', function() {
         window.data = data;
         d3.select('[name=firstname]').property('value', data.name);
 
-        render_chart(data.stats);
+        render_chart(data.stats, sex);
 
     });
 });
 
-function render_chart(data) {
+d3.select(window)
+    .on('hashchange', set_name)
+    .on('load', set_name);
+
+function set_name() {
+    var e = d3.event
+      , name = location.hash.replace('#', '')
+      , sex = d3.select('[name=sex]').property('value')
+      , url = [name, sex].join('/');
+
+    if (!name) { return; }
+
+    // set form field
+    d3.select('[name=firstname]').property('value', name);
+
+    d3.json(url, function(err, data) {
+        window.data = data;
+        render_chart(data.stats, sex);
+    });
+}
+
+function render_chart(data, sex) {
 
     // update y
     y.domain([0, d3.max(data, function(d) { return d.number; })])
@@ -138,16 +169,22 @@ function render_chart(data) {
         .call(yAxis);
 
     var bars = svg.selectAll('.column')
-        .data(data, function(d) { return d.year; });
+        .data(data, function(d) { return [d.year, d.sex]; });
 
     bars.enter().append('rect')
         .attr('class', 'column')
-        .attr('width', width / (2013 - 1880))
-        .attr('x', function(d) { return x(d.year); });
+        .attr('width', barWidth)
+        .attr('x', function(d) { 
+            return d.sex == 'F' ?
+                x(d.year) :
+                x(d.year) + barWidth;
+        });
 
     // update
     bars
-        .transition()
+        .classed('male', function(d) { return d.sex == 'M'; })
+        .classed('female', function(d) { return d.sex == 'F'; })
+      .transition()
         .attr('y', function(d) { return y(d.number); })
         .attr('height', function(d) { return height - y(d.number); });
 

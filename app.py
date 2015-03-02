@@ -71,7 +71,7 @@ def get_random_stats(group=None):
     "Get a random name, with stats"
     name = get_random_name(group=group)
     stats = get_name_stats(name, sex=group)
-    return jsonify(name=name, stats=stats)
+    return jsonify(name=name, sex=group, stats=stats)
 
 
 @app.route('/<name>')
@@ -79,7 +79,7 @@ def get_random_stats(group=None):
 def name_stats(name, sex=None):
     "Get JSON stats for a single name"
     stats = get_name_stats(name, sex)
-    return jsonify(results=stats)
+    return jsonify(name=name, sex=sex, stats=stats)
 
 
 @app.template_global('s')
