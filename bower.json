@@ -5,9 +5,6 @@
     "chrisamico <eyeseast@gmail.com>"
   ],
   "description": "A random name generator",
-  "moduleType": [
-    "globals"
-  ],
   "license": "null",
   "private": true,
   "ignore": [
@@ -19,7 +16,8 @@
     "tests"
   ],
   "dependencies": {
-    "d3": "~3.5.5"
+    "backbone": "~1.1.2",
+    "zepto": "~1.1.6"
   },
   "resolutions": {
     "d3": "~3.5.5"
