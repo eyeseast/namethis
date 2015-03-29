@@ -79,7 +79,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument('database_uri', default=DEFAULT_DATABASE_URL,
     help='Connection URI for source database')
 
-parser.add_argument('redis_uri', default=DEFAULT_REDIS_URL,
+parser.add_argument('redis_uri', default=DEFAULT_REDIS_URL, nargs='?',
     help='Connection URI for redis client')
 
 parser.add_argument('--flush', default=False, action='store_true')
