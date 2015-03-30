@@ -64,13 +64,15 @@ svg {
 
 {% block library_scripts %}
 <script src="{{ s('bower_components/d3/d3.min.js') }}"></script>
-{# <script src="{{ s('bower_components/zepto/zepto.min.js') }}"></script> #}
-{# <script src="{{ s('bower_components/underscore/underscore-min.js') }}"></script> #}
-{# <script src="{{ s('bower_components/backbone/backbone.js') }}"></script> #}
+<script src="{{ s('bower_components/zepto/zepto.min.js') }}"></script>
+<script src="{{ s('bower_components/underscore/underscore-min.js') }}"></script>
+<script src="{{ s('bower_components/backbone/backbone.js') }}"></script>
 
 {% endblock library_scripts %}
 
 {% block scripts %}
+<script src="{{ s('js/app.js') }}"></script>
+
 <script>
 var form = d3.select('#names')
   , baseurl = "{{ url_for('get_random_stats') }}"
@@ -197,4 +199,5 @@ function render_chart(data, sex) {
 
 }
 </script>
+
 {% endblock scripts %}

@@ -12,3 +12,11 @@ Home:
  - For any name, pull up popularity stats for it (rank, total count, etc)
  - Might also show the gender breakdown of a name
 
+
+For any given name, I want to know:
+
+ - How popular has it been over the years?
+ - When was it most popular?
+ - How will it sound with my last name?
+ - What's the gender balance? Is it more often a boy's or girl's name?
+ - What names are similar?

@@ -49,7 +49,7 @@ def get_name_stats(name, sex=None):
 @app.route('/')
 def index():
     "Get us started"
-    return render_template('index.html')
+    return render_template('stack.html')
 
 
 @app.route('/name')
