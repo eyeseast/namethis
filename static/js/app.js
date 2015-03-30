@@ -58,7 +58,7 @@ var FormView = Backbone.View.extend({
     getNameStats: function(name) {
         var form = this;
         $.get('/' + name, function(data) {
-            window.data = data;
+            form.trigger('data', data);
         });
     },
 
@@ -74,4 +74,16 @@ var FormView = Backbone.View.extend({
     }
 });
 
+
+var PopularityChart = Backbone.View.extend({
+
+    initialize: function(options) {
+        this.form = options.form;
+        this.listenTo(this.form, 'data', this.render);
+
+        
+    },
+
+    render: function(data) {}
+});
 
