@@ -3,7 +3,7 @@ Flask app serving up random names for no good reason
 """
 import os
 import dataset
-from flask import Flask, g, render_template, request, jsonify, url_for
+from flask import Flask, g, render_template, request, json, jsonify, url_for
 from redis import StrictRedis
 
 # database
@@ -52,9 +52,22 @@ def index():
     return render_template('stack.html')
 
 
+@app.route('/list')
+def name_list():
+    "Pick names from a list"
+    group = request.args.get('group', 'all')
+    number = request.args.get('n', 10)
+    names = get_random_name(group, number)
+
+    if request.is_xhr:
+        return jsonify(names=names)
+
+    return render_template('name_list.html', names=names)
+
+
 @app.route('/name')
 @app.route('/name/<group>')
-def get_random_name(group=None):
+def get_random_name(group=None, number=None):
     "Get a random name"
     redis = get_redis()
     if group in ('f', 'm', 'all'):
@@ -62,7 +75,7 @@ def get_random_name(group=None):
     else:
         key = "names:all"
 
-    return redis.srandmember(key)
+    return redis.srandmember(key, number)
 
 
 @app.route('/names')

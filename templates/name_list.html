@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Name Game{% endblock title %}
+
+{% block content %}
+<header class="container">
+    <div class="row">
+        <div class="col-xs-12">
+            <h1>Make a list of names</h1>
+        </div>
+    </div>
+</header>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 col-md-push-3" id="names">
+        {#
+        {% for name in names %}
+        <div class="name well" id="{{ name }}">
+            <a href="{{ url_for('index') }}#{{ name }}">{{ name }}</a>
+            <button class="close pull-right">x</button>
+        </div>
+        {% endfor %}
+        #}
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+
+{% block library_scripts %}
+<script src="{{ s('bower_components/zepto/zepto.min.js') }}"></script>
+<script src="{{ s('bower_components/underscore/underscore-min.js') }}"></script>
+<script src="{{ s('bower_components/backbone/backbone.js') }}"></script>
+<script src="{{ s('bower_components/marionette/lib/backbone.marionette.min.js') }}"></script>
+{% endblock library_scripts %}
+
+{% block scripts %}
+<script type="x-jst" id="name-template">
+<a href="/#<%= name %>"><%= name %></a>
+<button class="close pull-right">x</button>
+</script>
+
+<script src="{{ s('js/name_list.js') }}"></script>
+<script>
+var names = NameSet.from_array({{ names|tojson|safe }});
+var list = new NameListView({ el: '#names', collection: names }).render();
+</script>
+{% endblock scripts %}
