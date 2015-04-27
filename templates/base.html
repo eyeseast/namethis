@@ -4,7 +4,7 @@
   <title>{% block title %}{{ title|striptags }}{% endblock title %}</title>
 
   {% block library_css %}
-  <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="{{ s('bower_components/bootstrap/dist/css/bootstrap.min.css') }}" />
   {% endblock library_css %}
 
   {% block css %}{% endblock %}

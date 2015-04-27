@@ -3,7 +3,7 @@ Flask app serving up random names for no good reason
 """
 import os
 import dataset
-from flask import Flask, g, render_template, jsonify, url_for
+from flask import Flask, g, render_template, request, jsonify, url_for
 from redis import StrictRedis
 
 # database

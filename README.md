@@ -15,8 +15,8 @@ Home:
 
 For any given name, I want to know:
 
- - How popular has it been over the years?
- - When was it most popular?
- - How will it sound with my last name?
- - What's the gender balance? Is it more often a boy's or girl's name?
- - What names are similar?
+ - How popular has it been over the years? (column chart)
+ - When was it most popular? (text)
+ - How will it sound with my last name? (pairing)
+ - What's the gender balance? Is it more often a boy's or girl's name? (pie or divided box)
+ - What names are similar? (this is hard)

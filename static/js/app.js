@@ -43,9 +43,12 @@ var FormView = Backbone.View.extend({
     },
 
     onSubmit: function(e) {
-        var name = this.$el.find('[name=firstname]').val();
-
-        this.setName(name);
+        var name = this.$('[name=firstname]').val();
+        if (name) {
+            this.setName(name);
+        } else {
+            this.getRandomName();
+        }
     },
 
     getRandomName: function(group) {
@@ -64,7 +67,7 @@ var FormView = Backbone.View.extend({
 
     setName: function(name) {
         // set a name value in the form
-        this.$el.find('[name=firstname]').val(name);
+        this.$('[name=firstname]').val(name);
 
         // trigger to set the URL hash
         this.trigger('name', name);
@@ -80,7 +83,6 @@ var PopularityChart = Backbone.View.extend({
     initialize: function(options) {
         this.form = options.form;
         this.listenTo(this.form, 'data', this.render);
-
         
     },
 
