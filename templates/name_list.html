@@ -10,39 +10,93 @@
         </div>
     </div>
 </header>
-<div class="container">
-    <div class="row">
-        <div class="col-md-6 col-md-push-3" id="names">
-        {#
-        {% for name in names %}
-        <div class="name well" id="{{ name }}">
-            <a href="{{ url_for('index') }}#{{ name }}">{{ name }}</a>
-            <button class="close pull-right">x</button>
-        </div>
-        {% endfor %}
-        #}
-        </div>
-    </div>
-</div>
+<div class="container" id="app"></div>
 {% endblock content %}
 
 
 {% block library_scripts %}
 <script src="{{ s('bower_components/zepto/zepto.min.js') }}"></script>
 <script src="{{ s('bower_components/underscore/underscore-min.js') }}"></script>
-<script src="{{ s('bower_components/backbone/backbone.js') }}"></script>
-<script src="{{ s('bower_components/marionette/lib/backbone.marionette.min.js') }}"></script>
+<script src="{{ s('bower_components/ractive/ractive.js') }}"></script>
+<script src="{{ s('bower_components/ractive-transitions-fade/dist/ractive-transitions-fade.min.js') }}"></script>
+<script src="{{ s('bower_components/ractive-transitions-fly/ractive-transitions-fly.js') }}"></script>
+
 {% endblock library_scripts %}
 
 {% block scripts %}
-<script type="x-jst" id="name-template">
+<script type="x-jst">
 <a href="/#<%= name %>"><%= name %></a>
 <button class="close pull-right">x</button>
 </script>
 
-<script src="{{ s('js/name_list.js') }}"></script>
+<script id="name-template" type="text/ractive">
+{% include "name-list-template.html" %}
+</script>
+
 <script>
-var names = NameSet.from_array({{ names|tojson|safe }});
-var list = new NameListView({ el: '#names', collection: names }).render();
+var names = new Ractive({
+    el: '#app',
+    template: '#name-template',
+    data: {
+        lastname: localStorage.getItem('lastname') || '',
+        group: localStorage.getItem('group') || 'all',
+        names: JSON.parse(localStorage.getItem('names')) || [],
+        removed: JSON.parse(localStorage.getItem('removed')) || []
+    },
+
+    oninit: function() {
+        var data = this.get();
+
+        if (data.names.length < 10) {
+            var url = location.href + '?' + $.param({ group: data.group, n: 10 - data.names.length });
+            $.get(url, function(result) {
+                
+                this.set('names', data.names.concat(result.names).filter(function(n) {
+                    return !_.contains(data.removed, n);
+                }));
+
+            }.bind(this));
+        };
+    }
+});
+
+names.on('submit', function(e) {
+    e.original.preventDefault();
+});
+
+names.on('remove', function(e, i, name) {
+    // first, keep this out
+    this.push('removed', name);
+
+    // just get all the data
+    var data = this.get();
+    
+    getRandomName(data.group, data.removed, function(val) {
+        names.splice('names', i, 1, val);
+    });
+});
+
+names.observe('lastname group', function(newvalue, oldvalue, keypath) {
+    localStorage.setItem(keypath, newvalue);
+});
+
+names.observe('removed', function(newvalue, oldvalue, keypath) {
+    localStorage.setItem(keypath, JSON.stringify(newvalue));
+});
+
+function resetNames(group, exclude, cb) {
+
+}
+
+function getRandomName(group, exclude, cb) {
+    $.get('/name/' + group, function(val) {
+        if (_.contains(exclude, val)) {
+            return getRandomName(group, exclude, cb);
+        } else {
+            cb(val);
+        }
+    });
+}
+
 </script>
 {% endblock scripts %}

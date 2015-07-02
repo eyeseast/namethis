@@ -1,0 +1,40 @@
+{% raw %}
+<div class="row form">
+    <form class="form-inline col-xs-12" on-submit="submit">
+        <div class="form-group">
+            <label class="sr-only" for="lastname">Last name</label>
+            <input class="form-control" type="text" placeholder="Put in your last name" value="{{ lastname }}">
+        </div>
+        
+        <label class="radio-inline">
+            <input type="radio" name="{{group}}" value="f">
+            Girls
+        </label>
+
+        <label class="radio-inline">
+            <input type="radio" name="{{group}}" value="m">
+            Boys
+        </label>
+
+        <label class="radio-inline">
+            <input type="radio" name="{{group}}" value="all">
+            All
+        </label>
+    </form>
+</div>
+<hr>
+<div class="row">
+    <div id="names" class="col-xs-12">
+    {{#each names:i}}
+    <div class="name well" id="{{ this }}" intro="fade" outro="fly:{x: -1000, y:0, duration: 500}">
+        <span class="name">{{ this }}</span>
+        <span class="lastname">{{ lastname }}</span>
+        <div class="pull-right">
+            <a href="/#{{ this }}">stats</a>&nbsp;&nbsp;
+            <button class="close" on-click="remove:{{i}},{{this}}">x</button>
+        </div>
+    </div>
+    {{/each names:i}}
+    </div>
+</div>
+{% endraw %}
